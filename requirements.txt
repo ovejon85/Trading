@@ -9,4 +9,5 @@ plotly
 scipy
 requests
 python-dotenv
-matplotlib==3.2.2
+matplotlib
+aiohttp==3.9.5
