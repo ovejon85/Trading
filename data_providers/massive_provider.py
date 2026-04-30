@@ -11,6 +11,11 @@ load_dotenv()
 class MassiveProvider(DataProvider):
     def __init__(self):
         self.api_key = os.getenv("MASSIVE_API_KEY")
+        if not self.api_key:
+            raise ValueError(
+                "Massive API key missing. Please set MASSIVE_API_KEY "
+                "in your environment variables or .env file."
+            )
         # Massive.com is the successor to Polygon.io; the client handles the migration.
         self.client = RESTClient(self.api_key)
         self.ws_client = None

@@ -24,9 +24,9 @@ This project is a flexible, extensible framework for financial data analysis, sc
    ```bash
    pip install -r requirements.txt
    ```
-2. **Configure API Keys:**
-   - Copy `.env.example` to `.env`.
-   - Add your Alpaca and Massive.com API keys.
+2. **Configure API Keys (Securely):**
+   - **Local Development:** Copy `.env.example` to `.env` and add your Alpaca and Massive.com API keys. The `.env` file is excluded from version control via `.gitignore` to prevent accidental commits.
+   - **Jules Sessions:** You can securely provide API keys via the Jules Console or by exporting them as environment variables in the VM. **Do not** commit your actual API keys to GitHub or hardcode them into the application.
 3. **Run the Dashboard:**
    ```bash
    streamlit run app.py

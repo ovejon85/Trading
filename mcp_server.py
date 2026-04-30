@@ -16,7 +16,11 @@ def screen_stocks(symbols: str, min_market_cap: float = 0, min_price_change: flo
     :param min_market_cap: Minimum market capitalization.
     :param min_price_change: Minimum percentage price change.
     """
-    provider = AlpacaProvider() # Default to Alpaca for MCP
+    try:
+        provider = AlpacaProvider() # Default to Alpaca for MCP
+    except ValueError as e:
+        return f"Configuration Error: {e}"
+
     screener = Screener(provider)
     symbol_list = [s.strip() for s in symbols.split(",")]
     results = screener.screen(symbol_list, min_market_cap=min_market_cap, min_price_change=min_price_change)
@@ -31,7 +35,11 @@ def get_historical_data(symbol: str, timeframe: str = "1Day", days: int = 30) ->
     """
     Fetches historical data for a symbol.
     """
-    provider = AlpacaProvider()
+    try:
+        provider = AlpacaProvider()
+    except ValueError as e:
+        return f"Configuration Error: {e}"
+
     end_date = pd.Timestamp.now().strftime('%Y-%m-%d')
     start_date = (pd.Timestamp.now() - pd.Timedelta(days=days)).strftime('%Y-%m-%d')
     df = provider.fetch_data(symbol, timeframe, start_date, end_date)

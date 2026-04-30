@@ -12,6 +12,11 @@ class AlpacaProvider(DataProvider):
     def __init__(self):
         api_key = os.getenv("ALPACA_API_KEY")
         secret_key = os.getenv("ALPACA_SECRET_KEY")
+        if not api_key or not secret_key:
+            raise ValueError(
+                "Alpaca API credentials missing. Please set ALPACA_API_KEY and ALPACA_SECRET_KEY "
+                "in your environment variables or .env file."
+            )
         self.client = StockHistoricalDataClient(api_key, secret_key)
 
     def fetch_data(self, symbol: str, timeframe: str, start: str, end: str) -> pd.DataFrame:

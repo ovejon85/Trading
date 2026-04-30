@@ -23,12 +23,16 @@ start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2023-01-01"))
 end_date = st.sidebar.date_input("End Date", pd.to_datetime("today"))
 
 # Initialize Provider
-if provider_name == "Alpaca":
-    provider = AlpacaProvider()
-elif provider_name == "Massive REST":
-    provider = MassiveProvider()
-else:
-    provider = MassiveS3Provider()
+try:
+    if provider_name == "Alpaca":
+        provider = AlpacaProvider()
+    elif provider_name == "Massive REST":
+        provider = MassiveProvider()
+    else:
+        provider = MassiveS3Provider()
+except ValueError as e:
+    st.error(f"Configuration Error: {e}")
+    st.stop()
 
 # Main Tabs
 tab1, tab2, tab3 = st.tabs(["Analysis", "Screener", "Backtest"])

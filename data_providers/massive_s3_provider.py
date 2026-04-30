@@ -12,6 +12,11 @@ class MassiveS3Provider(DataProvider):
     def __init__(self, cache_dir: str = "data_cache"):
         self.access_key = os.getenv("MASSIVE_S3_ACCESS_KEY")
         self.secret_key = os.getenv("MASSIVE_S3_SECRET_KEY")
+        if not self.access_key or not self.secret_key:
+            raise ValueError(
+                "Massive S3 credentials missing. Please set MASSIVE_S3_ACCESS_KEY and MASSIVE_S3_SECRET_KEY "
+                "in your environment variables or .env file."
+            )
         self.endpoint_url = "https://files.massive.com"
         self.bucket_name = "flatfiles"
         self.cache_dir = Path(cache_dir)
