@@ -34,6 +34,9 @@ def enrich_data(input_file="market_data_5y.parquet", output_file="market_data_go
         # ROC (Rate of Change)
         group.ta.roc(length=21, append=True)
 
+        # Bollinger Bands
+        group.ta.bbands(length=20, std=2, append=True)
+
         # Forward Returns (T+1, T+5, T+10)
         # Shift close price backwards by N periods, calculate percentage change from current
         group["Fwd_Ret_1d"] = group["close"].shift(-1) / group["close"] - 1.0
