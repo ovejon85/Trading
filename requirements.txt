@@ -1,0 +1,12 @@
+streamlit
+pandas
+backtrader
+pandas-ta
+alpaca-py
+polygon-api-client
+boto3
+plotly
+scipy
+requests
+python-dotenv
+matplotlib==3.2.2
