@@ -32,13 +32,6 @@ def main():
     end_date = datetime.now()
     start_date = end_date - timedelta(days=365 * YEARS_BACK)
 
-    # Generate a list of dates (business days only to minimize unnecessary S3 calls)
-    dates = pd.bdate_range(start=start_date, end=end_date)
-    date_strings = [d.strftime('%Y-%m-%d') for d in dates]
-
-    print(f"Starting download process for {len(date_strings)} potential trading days...")
-    print(f"Date range: {date_strings[0]} to {date_strings[-1]}")
-
     try:
         provider = MassiveS3Provider()
     except ValueError as e:
@@ -46,6 +39,32 @@ def main():
         print("Please ensure MASSIVE_S3_ACCESS_KEY and MASSIVE_S3_SECRET_KEY are set in your environment.")
         return
 
+    # Check which files have already been downloaded to enable resume
+    # The files are named like 'day_aggs_v1_YYYY-MM-DD.csv.gz'
+    existing_files = list(provider.cache_dir.glob("day_aggs_v1_*.csv.gz"))
+    existing_dates = set()
+    for f in existing_files:
+        try:
+            # Extract the date part from the filename
+            date_part = f.name.replace("day_aggs_v1_", "").replace(".csv.gz", "")
+            existing_dates.add(date_part)
+        except Exception:
+            pass
+
+    # Generate a list of dates (business days only to minimize unnecessary S3 calls)
+    dates = pd.bdate_range(start=start_date, end=end_date)
+    all_date_strings = [d.strftime('%Y-%m-%d') for d in dates]
+
+    # Filter out dates that have already been downloaded
+    date_strings = [d for d in all_date_strings if d not in existing_dates]
+
+    if not date_strings:
+        print("All files in the specified range have already been downloaded.")
+        return
+
+    print(f"Found {len(existing_dates)} existing files in cache.")
+    print(f"Starting download process for {len(date_strings)} remaining potential trading days...")
+    print(f"Remaining date range: {date_strings[0]} to {date_strings[-1]}")
     # Use ThreadPoolExecutor to download files in parallel
     # We use a moderate number of workers to speed up downloads without overwhelming the network/CPU
     MAX_WORKERS = 10
