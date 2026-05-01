@@ -1,23 +1,22 @@
 # Financial Dashboard & Backtesting System
 
-This project is a flexible, extensible framework for financial data analysis, screening, and backtesting.
+This project is a high-performance framework for financial data analysis, screening, and vectorized backtesting, optimized for 5-year daily market sweeps.
 
-## Features
-- **Multi-Source Data:** Support for Alpaca and Massive.com.
-- **Web Dashboard:** Interactive UI built with Streamlit and Plotly.
-- **Backtesting Engine:** Event-driven backtesting using Backtrader.
-- **Stock Screener:** Filter stocks by market cap and price performance.
-- **Pattern Detection:** Automated detection of candlestick patterns (e.g., Hammer).
-- **Technical Analysis:** Integrated with `pandas-ta` for MACD, RSI, ATR, etc.
-- **MCP Server:** Expose tools to AI agents via the Model Context Protocol.
+## Core Features
+- **Universal Research Infrastructure (Gold DB):** A 1.47GB local Parquet database (`market_data_gold.parquet`) containing 5 years of daily data (13.7M+ rows) with pre-calculated indicators (RSI, SMA, ATR) and forward returns.
+- **Analysis Hub:** Polars-powered `MarketHub` for sub-second vectorized strategy evaluation across the entire market.
+- **Multi-Source Data:** Support for Massive.com (S3 Flat Files, REST) and Alpaca APIs.
+- **Yoelv1 Strategy Integration:** Native support for the `reversal_v3` mean-reversion model, including complex scoring, confluence detection, and sector-based portfolio clustering.
+- **Interactive Dashboard:** Streamlit UI for visual research and trade logging.
+- **AI-Agent Ready:** Integrated MCP server to expose research tools to AI assistants.
 
 ## Project Structure
-- `app.py`: The main Streamlit web application.
-- `mcp_server.py`: MCP server to expose tools to AI assistants.
-- `data_providers/`: Interfaces for fetching data from different APIs.
-- `engine/`: Logic for screening and pattern detection.
-- `backtest/`: The core backtesting execution engine.
-- `strategies/`: Directory to define your trading strategies.
+- `market_hub.py`: The high-performance interface for Gold DB research.
+- `sync_database.py`: Incremental update engine to keep Gold DB current from S3 sources.
+- `TASTATION_LOGIC.md`: Comprehensive technical specifications for the Tastation ecosystem.
+- `app.py`: The main Streamlit visualization application.
+- `data_providers/`: Interfaces for Massive.com and Alpaca.
+- `strategies/`: Core strategy definitions (e.g., `reversal_v3`, `bullish_engulfing`).
 
 ## Setup Instructions
 1. **Install Dependencies:**
@@ -25,20 +24,14 @@ This project is a flexible, extensible framework for financial data analysis, sc
    pip install -r requirements.txt
    ```
 2. **Configure API Keys:**
-   - Copy `.env.example` to `.env`.
-   - Add your Alpaca and Massive.com API keys.
-3. **Run the Dashboard:**
-   ```bash
-   streamlit run app.py
-   ```
-4. **Run the MCP Server (Optional):**
-   ```bash
-   python mcp_server.py
-   ```
+   - Create a `.env` file from `.env.example`.
+   - Add your `MASSIVE_API_KEY` and broker credentials.
+3. **Initialize Database:**
+   - Run `python sync_database.py` to build/update your local Gold DB.
+4. **Run Research Tools:**
+   - Visual: `streamlit run app.py`
+   - Command Line: Use `MarketHub` in your scripts for ultra-fast sweeps.
 
-## Defining New Strategies
-To add a new strategy:
-1. Create a new `.py` file in the `strategies/` directory.
-2. Define a class that inherits from `bt.Strategy`.
-3. Implement your logic in the `__init__` and `next` methods.
-4. Import and select your strategy in `app.py`.
+## Ongoing Work
+- **Jules Implementation:** Automated backtest implementation of the Yoelv1 strategy is currently in progress (Session `17071597020818277567`).
+- **Intraday Zoom:** Development of a JIT caching system for 2m/5m resolution analysis.
